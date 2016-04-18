@@ -3,6 +3,7 @@ void setup(){
 }
 
 void loop(){
+  delay(3000);//waiting for connection
   Serial.println(1000,DEC);
   Serial.println(800,DEC);
   delay(1000);
@@ -40,7 +41,6 @@ void loop(){
   Serial.println(200,DEC);
   Serial.println(500,DEC);
   delay(1000);
-  
 }
 
 

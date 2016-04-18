@@ -78,7 +78,7 @@ public class ArduinoConnection implements SerialPortEventListener {
 
             // Give the Arduino some time
             try {
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (InterruptedException ie) {
             }
 
@@ -127,9 +127,16 @@ public class ArduinoConnection implements SerialPortEventListener {
                     }
                     System.out.println("------");
                     String inputLine = input.readLine();
+                    if(inputLine == "finish"){
+                        this.close();
+                    }
                     System.out.println(inputLine);
-                    String inputLine2 = input.readLine();
-                    System.out.println(inputLine2);
+                    inputLine = input.readLine();
+                    if(inputLine == "finish"){
+                        this.close();
+                    }
+                    System.out.println(inputLine);
+                    //Thread.sleep(100);
                     break;
 
                 default:
@@ -163,7 +170,7 @@ public class ArduinoConnection implements SerialPortEventListener {
 
         // Wait 5 seconds then shutdown
         try {
-            Thread.sleep(2000);
+            Thread.sleep(20000);
             test.close();
         } catch (InterruptedException ie) {
         }
