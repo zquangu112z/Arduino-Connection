@@ -8,7 +8,7 @@ package serialconsole;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.event.*; 
+import java.awt.event.*;
 import java.util.Random;
 
 import gnu.io.CommPortIdentifier;
@@ -20,46 +20,42 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
+
 /**
  *
  * @author Ngu
  */
-public class Console extends Frame implements Runnable, SerialPortEventListener{
+public class Console extends Frame implements Runnable, SerialPortEventListener {
 
-    
-    
-    
-    //color 
-    Color[] mColors = {Color.BLACK, Color.BLUE, Color.CYAN, Color.GRAY, Color.ORANGE, Color.YELLOW, Color.PINK};
-
-    //kích thước box
-    private static final int BOX_WIDTH = 3200;
-    private static final int BOX_HEIGHT = 4800;
-    //vẽ lại ball
+    //frame size
+    private static final int BOX_WIDTH = 1000;
+    private static final int BOX_HEIGHT = 1000;
+    //repaint
     Thread mThread;
 
     //mảng Ball
     ArrayList<Point> mPoints = new ArrayList<>();
 
-//số lượng ball
-    int numberBall;
-    
-     //--------------
-    SerialPort serialPort = null;
+    //số lượng ball
+    //int numberBall;
 
+    //--------------
+    SerialPort serialPort = null;
+    
     private static final String PORT_NAMES[] = {
         "/dev/cu.wchusbserial1420",
+        "/dev/cu.wchusbserial1410",
         "/dev/tty.usbmodem", // Mac OS X
     //        "/dev/usbdev", // Linux
     //        "/dev/tty", // Linux
     //        "/dev/serial", // Linux
     //        "COM3", // Windows
     };
-
+    
     private String appName;
     private BufferedReader input;
     private OutputStream output;
-
+    
     private static final int TIME_OUT = 1000; // Port open timeout
     private static final int DATA_RATE = 9600; // Arduino serial port
 
@@ -90,7 +86,7 @@ public class Console extends Frame implements Runnable, SerialPortEventListener{
                     }
                 }
             }
-
+            
             if (portId == null || serialPort == null) {
                 System.out.println("Oops... Could not connect to Arduino");
                 return false;
@@ -111,14 +107,14 @@ public class Console extends Frame implements Runnable, SerialPortEventListener{
                 Thread.sleep(5000);
             } catch (InterruptedException ie) {
             }
-
+            
             return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
-
+    
     private void sendData(String data) {
         try {
             System.out.println("Sending data: '" + data + "'");
@@ -159,6 +155,9 @@ public class Console extends Frame implements Runnable, SerialPortEventListener{
                     
                     String x = input.readLine();                    
                     System.out.println(x);
+                    if(x.equals("stop")){
+                       this.close();
+                    }
                     
                     String y = input.readLine();
                     System.out.println(y);
@@ -166,9 +165,8 @@ public class Console extends Frame implements Runnable, SerialPortEventListener{
                     Point mPoint = new Point(Integer.parseInt(x), Integer.parseInt(y), 20, Color.BLUE);
                     mPoints.add(mPoint);
                     
-                    //Thread.sleep(100);
                     break;
-
+                
                 default:
                     break;
             }
@@ -176,10 +174,7 @@ public class Console extends Frame implements Runnable, SerialPortEventListener{
             System.err.println(e.toString());
         }
     }
-    //--------------
     
-    
-
     public Console() {
         /**
          * Frame
@@ -198,31 +193,25 @@ public class Console extends Frame implements Runnable, SerialPortEventListener{
         });
         
         appName = getClass().getName();
-        /**
-         * init Ball[10]
-         */
+        
         /**
          * repaint();
          */
         mThread = new Thread(this);
         mThread.start();
     }
-
+    
     public void paint(Graphics graphics) {
         try {
             for (int i = 0; i < mPoints.size(); i++) {
-                graphics.setColor(mPoints.get(i).getPoint_color());
-                int x = mPoints.get(i).getPoint_x();
-                int y = mPoints.get(i).getPoint_y();
-                int radius = mPoints.get(i).getPoint_radius();
-                graphics.fillOval(x, y, radius, radius);
+                mPoints.get(i).paint(graphics);
             }
             
         } catch (Exception e) {
             System.out.println("" + e);
         }
     }
-
+    
     @Override
     public void run() {
         while (true) {
@@ -233,41 +222,19 @@ public class Console extends Frame implements Runnable, SerialPortEventListener{
             }
         }
     }
-    /**
-     *
-     * @param array
-     * @return Color.
-     */
-    public static Color getRandom(Color[] array) {
-        int index = new Random().nextInt(array.length);
-        return array[index];
-    }
-
-    /**
-     * @param max
-     * @param min
-     * @return int
-     */
-    public static int getRandom(int max, int min) {
-        Random rand = new Random();
-        int randomNum = rand.nextInt((max - min) + 1) + min;
-        return randomNum;
-    }
     
-    
-    
-    
-    
-   
     public static void main(String[] args) {
         Console mConsole = new Console();
         mConsole.initialize();
-         try {
-            Thread.sleep(20000);
+        mConsole.sendData("start");
+        try {
+            int x = 20000;
+            Thread.sleep(x);
+            System.out.println("time out "+x);
             mConsole.close();
         } catch (InterruptedException ie) {
         }
         
     }
-
+    
 }

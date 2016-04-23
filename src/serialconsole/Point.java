@@ -6,12 +6,14 @@
 package serialconsole;
 
 import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  *
  * @author Ngu
  */
 public class Point {
+
     //tọa độ ban đầu    
     private int point_x;
     private int point_y;
@@ -37,7 +39,6 @@ public class Point {
     public void setPoint_color(Color point_color) {
         this.point_color = point_color;
     }
-    
 
     public int getPoint_x() {
         return point_x;
@@ -77,5 +78,11 @@ public class Point {
 
     public void setPoint_speed_y(int point_speed_y) {
         this.point_speed_y = point_speed_y;
+    }
+
+    public void paint(Graphics graphics) {
+        graphics.setColor(this.getPoint_color());
+        int radius = getPoint_radius();
+        graphics.fillOval(getPoint_x(), getPoint_y(), radius, radius);
     }
 }
