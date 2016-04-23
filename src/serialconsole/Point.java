@@ -84,5 +84,6 @@ public class Point {
         graphics.setColor(this.getPoint_color());
         int radius = getPoint_radius();
         graphics.fillOval(getPoint_x(), getPoint_y(), radius, radius);
+        graphics.drawString("( "+getPoint_x()+","+getPoint_y()+" )", getPoint_x() + 5, getPoint_y() + 5);
     }
 }

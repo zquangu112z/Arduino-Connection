@@ -32,24 +32,17 @@ public class Console extends Frame implements Runnable, SerialPortEventListener 
     private static final int BOX_HEIGHT = 1000;
     //repaint
     Thread mThread;
-
-    //mảng Ball
+    
     ArrayList<Point> mPoints = new ArrayList<>();
-
-    //số lượng ball
-    //int numberBall;
-
-    //--------------
+    
     SerialPort serialPort = null;
     
     private static final String PORT_NAMES[] = {
+        //MAC OSX
         "/dev/cu.wchusbserial1420",
         "/dev/cu.wchusbserial1410",
-        "/dev/tty.usbmodem", // Mac OS X
-    //        "/dev/usbdev", // Linux
-    //        "/dev/tty", // Linux
-    //        "/dev/serial", // Linux
-    //        "COM3", // Windows
+        "/dev/tty.usbmodem", 
+        "COM3", // Windows
     };
     
     private String appName;
@@ -164,6 +157,7 @@ public class Console extends Frame implements Runnable, SerialPortEventListener 
                     
                     Point mPoint = new Point(Integer.parseInt(x), Integer.parseInt(y), 20, Color.BLUE);
                     mPoints.add(mPoint);
+                    this.sendData("read");
                     
                     break;
                 
@@ -202,6 +196,9 @@ public class Console extends Frame implements Runnable, SerialPortEventListener 
     }
     
     public void paint(Graphics graphics) {
+        
+        graphics.drawLine(10, 10, 10, BOX_HEIGHT);
+        graphics.drawLine(10, 10 , BOX_WIDTH, 1);
         try {
             for (int i = 0; i < mPoints.size(); i++) {
                 mPoints.get(i).paint(graphics);
