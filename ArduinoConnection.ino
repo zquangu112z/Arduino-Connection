@@ -11,17 +11,15 @@ Point p = {0,0};
 int i =100;
 void loop(){
 
-  
-  //int i = 100;//for testing
   delay(3000);//waiting for connection
-  //p.x = 100, p.y = 200;
-  while(Serial.available()){  
+  //p.x = readX(), p.y = readY();
 
   
-  Serial.println(p.x+i+i);
-   Serial.println(p.y+i);
-  i+= 100;
-  break; 
+  while(Serial.available()){    
+    Serial.println(p.x+i+i);
+    Serial.println(p.y+i);
+    i+= 100;
+    delay(1000);
   }
 
   /*

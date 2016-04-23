@@ -83,7 +83,9 @@ public class Point {
     public void paint(Graphics graphics) {
         graphics.setColor(this.getPoint_color());
         int radius = getPoint_radius();
-        graphics.fillOval(getPoint_x(), getPoint_y(), radius, radius);
-        graphics.drawString("( "+getPoint_x()+","+getPoint_y()+" )", getPoint_x() + 5, getPoint_y() + 5);
+        int x = getPoint_x();
+        int y = getPoint_y();
+        graphics.fillOval(x + Console.MARGIN_X - radius/2, y + Console.MARGIN_Y - radius/2, radius, radius);
+        graphics.drawString("( "+getPoint_x()+","+getPoint_y()+" )", getPoint_x() + Console.MARGIN_X + 20, getPoint_y() + Console.MARGIN_Y + 5); //5: next to this point
     }
 }

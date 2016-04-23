@@ -15,6 +15,8 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -30,12 +32,8 @@ public class Console extends Frame implements Runnable, SerialPortEventListener 
     //frame size
     private static final int BOX_WIDTH = 1000;
     private static final int BOX_HEIGHT = 1000;
-    //repaint
-    Thread mThread;
-    
-    ArrayList<Point> mPoints = new ArrayList<>();
-    
-    SerialPort serialPort = null;
+    public static final int MARGIN_X = 10;
+    public static final int MARGIN_Y = 30;
     
     private static final String PORT_NAMES[] = {
         //MAC OSX
@@ -43,14 +41,22 @@ public class Console extends Frame implements Runnable, SerialPortEventListener 
         "/dev/cu.wchusbserial1410",
         "/dev/tty.usbmodem", 
         "COM3", // Windows
+        "COM4", // Windows
     };
+    
+    private static final int TIME_OUT = 1000; // Port open timeout
+    private static final int DATA_RATE = 9600; // Arduino serial port
+    
+    //repaint
+    Thread mThread;    
+    ArrayList<Point> mPoints = new ArrayList<>();    
+    SerialPort serialPort = null;
     
     private String appName;
     private BufferedReader input;
     private OutputStream output;
     
-    private static final int TIME_OUT = 1000; // Port open timeout
-    private static final int DATA_RATE = 9600; // Arduino serial port
+    
 
     public boolean initialize() {
         try {
@@ -170,13 +176,10 @@ public class Console extends Frame implements Runnable, SerialPortEventListener 
     }
     
     public Console() {
-        /**
-         * Frame
-         */
-        setResizable(false);
-        setTitle("BallCollusion");
+        setResizable(true);
+        setTitle("Foot size MAC OSX");
         setBounds(10, 10, BOX_WIDTH, BOX_HEIGHT);
-        //setSize(BOX_WIDTH, BOX_HEIGHT);
+        setBackground(Color.PINK);
         setVisible(true);
         //exit 
         addWindowListener(new WindowAdapter() {
@@ -186,8 +189,7 @@ public class Console extends Frame implements Runnable, SerialPortEventListener 
             }
         });
         
-        appName = getClass().getName();
-        
+        appName = getClass().getName();        
         /**
          * repaint();
          */
@@ -195,18 +197,45 @@ public class Console extends Frame implements Runnable, SerialPortEventListener 
         mThread.start();
     }
     
-    public void paint(Graphics graphics) {
-        
-        graphics.drawLine(10, 10, 10, BOX_HEIGHT);
-        graphics.drawLine(10, 10 , BOX_WIDTH, 1);
+    
+    /**
+     * Draw SerialConsole
+     * @param graphics 
+     */
+    public void paint(Graphics graphics) {        
+        //ruler
+        drawRuler(graphics, MARGIN_X, MARGIN_Y, MARGIN_X, BOX_HEIGHT);//horizontal 
+        drawRuler(graphics, MARGIN_X, MARGIN_Y, BOX_WIDTH, MARGIN_Y);//vertical        
+        //points
         try {
             for (int i = 0; i < mPoints.size(); i++) {
                 mPoints.get(i).paint(graphics);
-            }
-            
+            }            
         } catch (Exception e) {
             System.out.println("" + e);
         }
+    }
+    
+    
+    /**
+     * draw ruler:
+     * STEP: define length of 1 step
+     */
+    private final double STEP = 50;
+    private void drawRuler(Graphics g1, int x1, int y1, int x2, int y2) {
+                Graphics2D g = (Graphics2D) g1.create();
+
+                double dx = x2 - x1, dy = y2 - y1;
+                double len = Math.sqrt(dx*dx + dy*dy);
+                AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
+                at.concatenate(AffineTransform.getRotateInstance(Math.atan2(dy, dx)));
+                g.transform(at);
+
+                // Draw horizontal ruler starting in (0, 0)
+                g.drawLine(0, 0, (int) len, 0);
+                for (double i = 0; i < len; i += STEP){
+                    g.drawLine((int) i, -3, (int) i, 3);       
+                }
     }
     
     @Override
